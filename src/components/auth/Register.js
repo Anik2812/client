@@ -22,7 +22,7 @@ const Register = () => {
     }),
     onSubmit: async (values) => {
       try {
-        const res = await axios.post('/api/auth/register', values);
+        const res = await axios.post('/auth/register', values);
         localStorage.setItem('token', res.data.token);
         navigate('/dashboard');
       } catch (err) {

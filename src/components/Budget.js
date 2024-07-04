@@ -12,6 +12,7 @@ const Budget = () => {
   const [budgets, setBudgets] = useState([]);
   const [newBudget, setNewBudget] = useState({ category: '', amount: '', period: 'monthly' });
   const theme = useTheme();
+
   useEffect(() => {
     fetchBudgets();
   }, []);
@@ -49,7 +50,7 @@ const Budget = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+  };  
 
   const deleteBudget = async (id) => {
     const config = {
@@ -68,9 +69,7 @@ const Budget = () => {
   return (
     <Container maxWidth="lg">
       <motion.div
-        initial={{
-          opacity: 0, y: 50
-        }}
+        initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
@@ -81,92 +80,121 @@ const Budget = () => {
         </Box>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
-            <Paper elevation={3} sx={{ p: 3 }}>
-              <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-                Add New Budget
-              </Typography>
-              <form onSubmit={handleSubmit}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <TextField
-                    name="category"
-                    label="Category"
-                    value={newBudget.category}
-                    onChange={handleInputChange}
-                    required
-                    fullWidth
-                    variant="outlined"
-                  />
-                  <TextField
-                    name="amount"
-                    label="Amount"
-                    type="number"
-                    value={newBudget.amount}
-                    onChange={handleInputChange}
-                    required
-                    fullWidth
-                    variant="outlined"
-                  />
-                  <FormControl fullWidth variant="outlined">
-                    <InputLabel id="period-label">Period</InputLabel>
-                    <Select
-                      labelId="period-label"
-                      name="period"
-                      value={newBudget.period}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Paper elevation={3} sx={{ p: 3 }}>
+                <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
+                  Add New Budget
+                </Typography>
+                <form onSubmit={handleSubmit}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <TextField
+                      name="category"
+                      label="Category"
+                      value={newBudget.category}
                       onChange={handleInputChange}
-                      label="Period"
+                      required
+                      fullWidth
+                      variant="outlined"
+                      sx={{ transition: '0.3s ease', '&:hover': { boxShadow: `0 0 5px ${theme.palette.primary.main}` } }}
+                    />
+                    <TextField
+                      name="amount"
+                      label="Amount"
+                      type="number"
+                      value={newBudget.amount}
+                      onChange={handleInputChange}
+                      required
+                      fullWidth
+                      variant="outlined"
+                      sx={{ transition: '0.3s ease', '&:hover': { boxShadow: `0 0 5px ${theme.palette.primary.main}` } }}
+                    />
+                    <FormControl fullWidth variant="outlined">
+                      <InputLabel id="period-label">Period</InputLabel>
+                      <Select
+                        labelId="period-label"
+                        name="period"
+                        value={newBudget.period}
+                        onChange={handleInputChange}
+                        label="Period"
+                        sx={{ transition: '0.3s ease', '&:hover': { boxShadow: `0 0 5px ${theme.palette.primary.main}` } }}
+                      >
+                        <MenuItem value="weekly">Weekly</MenuItem>
+                        <MenuItem value="monthly">Monthly</MenuItem>
+                        <MenuItem value="yearly">Yearly</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="secondary"
+                      startIcon={<AddIcon />}
+                      size="large"
+                      sx={{ transition: '0.3s ease', '&:hover': { backgroundColor: theme.palette.secondary.dark } }}
                     >
-                      <MenuItem value="weekly">Weekly</MenuItem>
-                      <MenuItem value="monthly">Monthly</MenuItem>
-                      <MenuItem value="yearly">Yearly</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <Button type="submit" variant="contained" color="secondary" startIcon={<AddIcon />} size="large">
-                    Add Budget
-                  </Button>
-                </Box>
-              </form>
-            </Paper>
+                      Add Budget
+                    </Button>
+                  </Box>
+                </form>
+              </Paper>
+            </motion.div>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Paper elevation={3} sx={{ p: 3 }}>
-              <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-                Current Budgets
-              </Typography>
-              <List>
-                <AnimatePresence>
-                  {budgets.map(budget => (
-                    <motion.div
-                      key={budget._id}
-                      initial={{ opacity: 0, x: -50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 50 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <ListItem>
-                        <ListItemText
-                          primary={budget.category}
-                          secondary={
-                            <Typography variant="body2" color="textSecondary">
-                              ${budget.amount}
-                              <Chip
-                                label={budget.period}
-                                size="small"
-                                sx={{ ml: 1, backgroundColor: theme.palette.primary.main }}
-                              />
-                            </Typography>
-                          }
-                        />
-                        <ListItemSecondaryAction>
-                          <IconButton edge="end" aria-label="delete" onClick={() => deleteBudget(budget._id)} sx={{ color: theme.palette.error.main }}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </List>
-            </Paper>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Paper elevation={3} sx={{ p: 3 }}>
+                <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
+                  Current Budgets
+                </Typography>
+                <List>
+                  <AnimatePresence>
+                    {budgets.map(budget => (
+                      <motion.div
+                        key={budget._id}
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 50 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ListItem
+                          sx={{ transition: '0.3s ease', '&:hover': { backgroundColor: theme.palette.action.hover } }}
+                        >
+                          <ListItemText
+                            primary={budget.category}
+                            secondary={
+                              <Typography variant="body2" color="textSecondary">
+                                ${budget.amount}
+                                <Chip
+                                  label={budget.period}
+                                  size="small"
+                                  sx={{ ml: 1, backgroundColor: theme.palette.primary.main }}
+                                />
+                              </Typography>
+                            }
+                          />
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              edge="end"
+                              aria-label="delete"
+                              onClick={() => deleteBudget(budget._id)}
+                              sx={{ color: theme.palette.error.main }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </List>
+              </Paper>
+            </motion.div>
           </Grid>
         </Grid>
       </motion.div>
