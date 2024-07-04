@@ -4,12 +4,12 @@ import { Link as RouterLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Container, Typography, Button, List, ListItem, ListItemText, 
-  ListItemSecondaryAction, IconButton, Paper, Box, Grid, Fade, useTheme, Dialog, DialogActions, DialogContent, DialogTitle, TextField
+  ListItemSecondaryAction, IconButton, Paper, Box, Grid, Fade, useTheme, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Snackbar, Alert
 } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon, Add as AddIcon, TrendingUp } from '@mui/icons-material';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
-const COLORS = ['#bb86fc', '#03dac6', '#cf6679', '#ff7597', '#70efde'];
+const COLORS = ['#bb86fc', '#03dac6', '#cf6679', '#ff7597', '#70efde', '#e57373', '#f06292', '#ba68c8', '#9575cd', '#7986cb', '#64b5f6', '#4fc3f7', '#4db6ac'];
 
 const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
@@ -17,6 +17,9 @@ const Dashboard = () => {
   const [editingExpense, setEditingExpense] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [otherCategory, setOtherCategory] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const theme = useTheme();
 
   useEffect(() => {
@@ -61,9 +64,15 @@ const Dashboard = () => {
       const response = await axios.delete(`http://localhost:5000/api/expenses/${id}`, config);
       console.log('Delete response:', response.data);
       setExpenses(expenses.filter(expense => expense._id !== id));
+      setSnackbarMessage('Expense deleted successfully');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
     } catch (err) {
       console.error('Error deleting expense:', err.response ? err.response.data : err.message);
       console.error('Full error object:', err);
+      setSnackbarMessage('Failed to delete expense');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
@@ -142,8 +151,26 @@ const Dashboard = () => {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ background: 'rgba(0, 0, 0, 0.8)', border: 'none' }} />
-                    <Legend />
+                    <Tooltip 
+                      contentStyle={{ background: 'rgba(0, 0, 0, 0.8)', border: 'none' }} 
+                      labelStyle={{ color: 'white' }}
+                      formatter={(value, name) => [`$${value.toFixed(2)}`, name]}
+                    />
+                    <Legend 
+                      layout="vertical" 
+                      verticalAlign="middle" 
+                      align="right" 
+                      iconSize={10}
+                      iconType="circle"
+                      wrapperStyle={{ 
+                        top: 0, 
+                        right: 10, 
+                        background: theme.palette.background.paper,
+                        padding: 10, 
+                        borderRadius: 5,
+                        boxShadow: theme.shadows[2]
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </Box>
@@ -229,6 +256,17 @@ const Dashboard = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        {/* Snackbar for notifications */}
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={() => setSnackbarOpen(false)}
+        >
+          <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </motion.div>
     </Container>
   );
