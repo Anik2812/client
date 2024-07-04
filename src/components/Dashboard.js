@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link as RouterLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Container, Typography, Button, List, ListItem, ListItemText,
-  ListItemSecondaryAction, IconButton, Paper, Box, Grid, useTheme
+import { 
+  Container, Typography, Button, List, ListItem, ListItemText, 
+  ListItemSecondaryAction, IconButton, Paper, Box, Grid, Fade, useTheme, Dialog, DialogActions, DialogContent, DialogTitle, TextField
 } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon, Add as AddIcon, TrendingUp } from '@mui/icons-material';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
@@ -14,7 +14,10 @@ const COLORS = ['#bb86fc', '#03dac6', '#cf6679', '#ff7597', '#70efde'];
 const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
   const [ExpenseChartData, setChartData] = useState([]);
-  const theme = useTheme(); // Use the theme hook here
+  const [editingExpense, setEditingExpense] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [otherCategory, setOtherCategory] = useState('');
+  const theme = useTheme();
 
   useEffect(() => {
     fetchExpenses();
@@ -32,8 +35,6 @@ const Dashboard = () => {
     }, []);
     setChartData(data);
   }, [expenses]);
-
-  const [editingExpense, setEditingExpense] = useState(null);
 
   const fetchExpenses = async () => {
     const config = {
@@ -66,6 +67,27 @@ const Dashboard = () => {
     }
   };
 
+  const handleEdit = (expense) => {
+    setEditingExpense(expense);
+    // Redirect to edit page
+    window.location.href = `/edit-expense/${expense._id}`;
+  };
+
+  const handleDialogOpen = (category) => {
+    if (category === 'Other') {
+      setShowDialog(true);
+    }
+  };
+
+  const handleDialogClose = () => {
+    setShowDialog(false);
+    // Optionally, save the 'other' category data
+  };
+
+  const handleOtherCategoryChange = (e) => {
+    setOtherCategory(e.target.value);
+  };
+
   const chartData = expenses.reduce((acc, expense) => {
     const existingCategory = acc.find(item => item.name === expense.category);
     if (existingCategory) {
@@ -87,10 +109,10 @@ const Dashboard = () => {
           <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 300 }}>
             Financial Dashboard
           </Typography>
-          <Button
-            variant="contained"
-            color="secondary"
-            component={RouterLink}
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            component={RouterLink} 
             to="/add-expense"
             startIcon={<AddIcon />}
             sx={{ mb: 2 }}
@@ -152,10 +174,20 @@ const Dashboard = () => {
                           }
                         />
                         <ListItemSecondaryAction>
-                          <IconButton edge="end" aria-label="edit" sx={{ color: theme.palette.secondary.main }}>
+                          <IconButton
+                            edge="end"
+                            aria-label="edit"
+                            sx={{ color: theme.palette.secondary.main }}
+                            onClick={() => handleEdit(expense)}
+                          >
                             <EditIcon />
                           </IconButton>
-                          <IconButton edge="end" aria-label="delete" onClick={() => deleteExpense(expense._id)} sx={{ color: theme.palette.error.main }}>
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() => deleteExpense(expense._id)}
+                            sx={{ color: theme.palette.error.main }}
+                          >
                             <DeleteIcon />
                           </IconButton>
                         </ListItemSecondaryAction>
@@ -167,6 +199,36 @@ const Dashboard = () => {
             </Paper>
           </Grid>
         </Grid>
+
+        {/* Dialog for Other Category */}
+        <Dialog open={showDialog} onClose={handleDialogClose}>
+          <DialogTitle>Specify Other Category</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Other Category"
+              type="text"
+              fullWidth
+              value={otherCategory}
+              onChange={handleOtherCategoryChange}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => {
+                // Handle saving the 'other' category data
+                handleDialogClose();
+              }} 
+              color="primary"
+            >
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </motion.div>
     </Container>
   );

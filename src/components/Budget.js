@@ -11,8 +11,7 @@ import { Delete as DeleteIcon, Add as AddIcon, AccountBalance } from '@mui/icons
 const Budget = () => {
   const [budgets, setBudgets] = useState([]);
   const [newBudget, setNewBudget] = useState({ category: '', amount: '', period: 'monthly' });
-  const theme = useTheme(); // Use the theme hook here
-
+  const theme = useTheme();
   useEffect(() => {
     fetchBudgets();
   }, []);
@@ -69,7 +68,9 @@ const Budget = () => {
   return (
     <Container maxWidth="lg">
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
+        initial={{
+          opacity: 0, y: 50
+        }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
