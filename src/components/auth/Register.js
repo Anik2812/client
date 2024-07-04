@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from '../../axios';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { TextField, Button, Container, Typography, Box } from '@mui/material';
+import { TextField, Button, Container, Typography, Box, Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -12,16 +16,21 @@ const Register = () => {
       password: '',
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Required'),
+      name: Yup.string().required('Name is required'),
       email: Yup.string().email('Invalid email address').required('Required'),
-      password: Yup.string().required('Required'),
+      password: Yup.string().min(6, 'Password must be at least 6 characters').required('Required'),
     }),
     onSubmit: async (values) => {
       try {
-        const res = await axios.post('/users', values);
-        console.log(res.data);
+        const res = await axios.post('/api/auth/register', values);
+        localStorage.setItem('token', res.data.token);
+        navigate('/dashboard');
       } catch (err) {
-        console.error(err);
+        if (err.response && err.response.data) {
+          setError(err.response.data.msg || 'An error occurred');
+        } else {
+          setError('An unexpected error occurred');
+        }
       }
     },
   });
@@ -80,6 +89,7 @@ const Register = () => {
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
           />
+          {error && <Alert severity="error">{error}</Alert>}
           <Button
             type="submit"
             fullWidth

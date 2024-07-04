@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
+  
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -20,11 +20,15 @@ const Login = () => {
     }),
     onSubmit: async (values) => {
       try {
-        const res = await axios.post('/auth', values);
+        const res = await axios.post('/auth/login', values);
         localStorage.setItem('token', res.data.token);
         navigate('/dashboard');
       } catch (err) {
-        setError('Invalid credentials');
+        if (err.response && err.response.data) {
+          setError(err.response.data.msg || 'An error occurred');
+        } else {
+          setError('An unexpected error occurred');
+        }
       }
     },
   });
