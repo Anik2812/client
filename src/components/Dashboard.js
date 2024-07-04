@@ -4,12 +4,16 @@ import { Link as RouterLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Container, Typography, Button, List, ListItem, ListItemText, 
-  ListItemSecondaryAction, IconButton, Paper, Box, Grid, Fade, useTheme, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Snackbar, Alert
+  ListItemSecondaryAction, IconButton, Paper, Box, Grid, useTheme, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Snackbar, Alert
 } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon, Add as AddIcon, TrendingUp } from '@mui/icons-material';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
-const COLORS = ['#bb86fc', '#03dac6', '#cf6679', '#ff7597', '#70efde', '#e57373', '#f06292', '#ba68c8', '#9575cd', '#7986cb', '#64b5f6', '#4fc3f7', '#4db6ac'];
+const COLORS = [
+  '#ff6f61', '#ffb74d', '#f06292', '#ba68c8', '#64b5f6', '#4db6ac', 
+'#f9a825', '#ff7043', '#e57373', '#8e24aa', '#7b1fa2', '#f57f17', 
+'#c2185b', '#9c27b0', '#ffeb3b', '#4caf50', '#2196f3', '#009688'
+];
 
 const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
@@ -36,8 +40,10 @@ const Dashboard = () => {
       }
       return acc;
     }, []);
+    console.log(data); // Log chart data to ensure all categories are included
     setChartData(data);
   }, [expenses]);
+  
 
   const fetchExpenses = async () => {
     const config = {
@@ -146,30 +152,38 @@ const Dashboard = () => {
                       outerRadius={100}
                       fill="#8884d8"
                       dataKey="value"
+                      animationBegin={0}
+                      animationDuration={800}
+                      animationEasing="ease-in-out"
                     >
                       {chartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip 
-                      contentStyle={{ background: 'rgba(0, 0, 0, 0.8)', border: 'none' }} 
-                      labelStyle={{ color: 'white' }}
+                      contentStyle={{ backgroundColor: '#333', color: '#fff' }} 
+                      labelStyle={{ color: '#fff' }}
                       formatter={(value, name) => [`$${value.toFixed(2)}`, name]}
                     />
                     <Legend 
                       layout="vertical" 
                       verticalAlign="middle" 
-                      align="right" 
-                      iconSize={10}
+                      align="right"
+                      iconSize={12}
                       iconType="circle"
                       wrapperStyle={{ 
-                        top: 0, 
-                        right: 10, 
-                        background: theme.palette.background.paper,
-                        padding: 10, 
+                        paddingLeft: 10,
+                        color: '#fff',
+                        fontSize: '0.9rem',
+                        backgroundColor: '#212121',
                         borderRadius: 5,
-                        boxShadow: theme.shadows[2]
+                        boxShadow: theme.shadows[2],
+                        display: 'flex',
+                        flexDirection: 'column'
                       }}
+                      formatter={(value) => (
+                        <span style={{ color: '#fff' }}>{value}</span>
+                      )}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -245,11 +259,12 @@ const Dashboard = () => {
             <Button onClick={handleDialogClose} color="primary">
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={() => {
-                // Handle saving the 'other' category data
-                handleDialogClose();
-              }} 
+                // Save the 'other' category data
+                setShowDialog(false);
+                // Possibly update the chart data or perform other actions
+              }}
               color="primary"
             >
               Save
@@ -257,7 +272,6 @@ const Dashboard = () => {
           </DialogActions>
         </Dialog>
 
-        {/* Snackbar for notifications */}
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}

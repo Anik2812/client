@@ -13,25 +13,44 @@ import EditExpense from './components/EditExpense';
 const theme = createTheme({
   palette: {
     mode: 'dark',
-    background: {
-      paper: '#1e1e1e',
-      default: '#121212',
-    },
     primary: {
       main: '#bb86fc',
     },
     secondary: {
       main: '#03dac6',
     },
-    error: {
-      main: '#cf6679',
-    },
-    text: {
-      primary: '#ffffff',
-      secondary: '#b0b0b0',
+    background: {
+      default: '#121212',
+      paper: '#1e1e1e',
     },
   },
-  shadows: ['none', '0px 4px 6px rgba(0,0,0,0.1)', /* Add more shadows as needed */],
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontWeight: 300,
+    },
+    h2: {
+      fontWeight: 300,
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          textTransform: 'none',
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
+        },
+      },
+    },
+  },
 });
 
 
